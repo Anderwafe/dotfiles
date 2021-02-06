@@ -1,0 +1,5 @@
+audio.sync_bitrate_enumeration=4
+gaia.attached_device_id="45e03b19c8a83e39ac450c945c4c8db96e422f15"
+audio.play_bitrate_enumeration=4
+ui.hide_hpto=true
+ui.show_unplayable_tracks=true

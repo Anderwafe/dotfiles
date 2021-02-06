@@ -1,0 +1,5 @@
+content{
+  timesIntroVideoPlayed:i=2
+  autologin:b=no
+  useSteamLoginAuto:b=yes
+}
