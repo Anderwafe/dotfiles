@@ -65,7 +65,7 @@ export PS1="[\u@\h \W]\$ "
 export COLORTERM='truecolor'
 export EDITOR="$EXEPREFIX nvim"
 export VISUAL="$EXEPREFIX nvim"
-export PAGES="$EXEPREFIX less"
+export PAGER="$EXEPREFIX less"
 export BROWSER="$EXEPREFIX zen-browser"
 export LANG='ru_RU.UTF-8' 
 export LANGUAGE='ru_RU.UTF-8:be_BY.UTF-8:en_US.UTF-8' # used to set messages languages (as LC_MESSAGES) to a multi-valued value. `man locale(7)`. [GNU gettext with description of var](https://www.gnu.org/software/gettext/manual/html_node/The-LANGUAGE-variable.html)
@@ -92,8 +92,8 @@ export PASSWORD_STORE_CLIP_TIME=10
 export PASSWORD_STORE_DIR="$XDG_DATA_HOME/passwords/"
 
 ## ------------------------    DOTNET environment    ------------------------ #
-export DOTNET_INSTALL_DIR="$XDG_DATA_HOME/dotnet/"
-export DOTNET_ROOT="$XDG_DATA_HOME/dotnet/"
+export DOTNET_INSTALL_DIR="$HOME/.dotnet/"
+export DOTNET_ROOT="$HOME/.dotnet/"
 export DOTNET_CLI_TELEMETRY_OPTOUT=1
 
 # ========================          ALIASES          ======================== #
@@ -106,13 +106,16 @@ alias octave="$EXEPREFIX octave --gui"
 alias secure_mode_on='set +o history'
 alias secure_mode_off='set -o history'
 
+## download audio from youtube video link
+alias yt-dlp-download-audio='yt-dlp --audio-quality 0 --audio-format best -x'
+
 # ========================       PATH settings       ======================== #
 ## User-executable PATH
 append_path "$HOME/.local/bin/"
 
 ## .NET PATH
-append_path "$XDG_DATA_HOME/dotnet/"
-append_path "$XDG_DATA_HOME/dotnet/tools/"
+append_path "$HOME/.dotnet/"
+append_path "$HOME/.dotnet/tools/"
 
 ## Flutter PATH
 append_path "$XDG_DATA_HOME/flutter/sdk/development/flutter/bin/"
