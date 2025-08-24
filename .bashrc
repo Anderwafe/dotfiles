@@ -96,6 +96,11 @@ export DOTNET_INSTALL_DIR="$HOME/.dotnet/"
 export DOTNET_ROOT="$HOME/.dotnet/"
 export DOTNET_CLI_TELEMETRY_OPTOUT=1
 
+## ------------------------     SHITTY JAVA env      ------------------------ #
+export _JAVA_AWT_WM_NONREPARENTING=1
+export _JAVA_OPTIONS='-Dawt.useSystemAAFontSettings=on'
+export JAVA_FONTS=/usr/share/fonts/TTF
+
 # ========================          ALIASES          ======================== #
 ##alias ls='ls --color=auto'
 ##alias grep='grep --color=auto'
@@ -108,6 +113,9 @@ alias secure_mode_off='set -o history'
 
 ## download audio from youtube video link
 alias yt-dlp-download-audio='yt-dlp --audio-quality 0 --audio-format best -x'
+
+## connect to or create tmux session
+alias tmux='tmux attach || tmux new'
 
 # ========================       PATH settings       ======================== #
 ## User-executable PATH
