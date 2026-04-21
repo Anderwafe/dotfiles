@@ -31,7 +31,7 @@ complete -f -F _dotnet_bash_complete dotnet
 
 ## edit and concate daily notes
 daily_notes_prefix="`xdg-user-dir DOCUMENTS`/notes/dated/"
-### creates and full (if not exists) daily notes file, and returns path to it (by echo)
+### creates and fills (if not exists) daily notes file, and returns path to it (by echo)
 get_daily_notes_path() {
     [[ -d $daily_notes_prefix ]] || mkdir -p $daily_notes_prefix
     local today_echofriendly="`date -Idate`"
@@ -54,7 +54,7 @@ cd_to_daily_notes_path() {
     cd $daily_notes_prefix
 }
 alias dailynotes_edit='(cd_to_daily_notes_path; $EDITOR $(get_daily_notes_path))'
-alias dailynotes_showall='echo $(concate_daily_notes) | $EDITOR'
+alias dailynotes_showall='echo -e "$(concate_daily_notes)" | $PAGER'
 
 # ========================   Supporting variables   ========================= #
 EXEPREFIX='/usr/bin/env'
