@@ -5,6 +5,31 @@ local config = {}
 config.plugins = {}
 config.plugins.isLspConfigPermitted = true -- should lspconfig plugin be downloaded and some configurations loaded
 config.plugins.isNvimTreesitterPermitted = true -- should nvim treesitter plugin be downloaded
+config.plugins.nvimTreesitter = {}
+config.plugins.nvimTreesitter.defaultInstallParsers = {
+    -- 'html',
+    -- 'html_tags',
+    'markdown',
+    'markdown_inline',
+
+    'xml',
+    'ini',
+    'json',
+
+    -- 'sxhkdrc',
+    -- 'luadoc',
+    -- 'diff',
+    'make',
+    'gitignore',
+
+    'c',
+    'cpp',
+    'c_sharp',
+    'lua',
+    'python',
+    -- 'latex',
+    -- 'sql',
+}
 
 -- options
 vim.o.autoindent = true
@@ -81,6 +106,8 @@ if config.plugins.isNvimTreesitterPermitted then
     vim.pack.add{
         {src = 'https://github.com/nvim-treesitter/nvim-treesitter.git'},
     }
+
+    require'nvim-treesitter'.install(config.plugins.nvimTreesitter.defaultInstallParsers)
 end
 
 
@@ -140,28 +167,28 @@ vim.api.nvim_create_user_command('ShowLineActions', 'lua vim.lsp.buf.code_action
 
 vim.api.nvim_create_user_command('DiffOrig', 'vert new | set buftype=nofile | read ++edit # | 0d_ | diffthis | wincmd p | diffthis', {})
 
-vim.api.nvim_create_user_command('ShowLineDiagnostics', 
+vim.api.nvim_create_user_command('ShowLineDiagnostics',
     function(opts)
         vim.diagnostic.open_float()
     end, {})
 
-vim.api.nvim_create_user_command('ShowFileDiagnostics', 
+vim.api.nvim_create_user_command('ShowFileDiagnostics',
     function(opts)
         vim.diagnostic.setqflist()
     end, {})
 
-vim.api.nvim_create_user_command('LoadFileDiagnostics', 
+vim.api.nvim_create_user_command('LoadFileDiagnostics',
     function(opts)
         vim.diagnostic.setqflist({open = false})
     end, {})
 
-vim.api.nvim_create_user_command('GotoNextFileDiagnostic', 
+vim.api.nvim_create_user_command('GotoNextFileDiagnostic',
     function(opts)
         local next_diagnostic = vim.diagnostic.get_next()
         vim.diagnostic.jump({diagnostic = next_diagnostic})
     end, {})
 
-vim.api.nvim_create_user_command('GotoPrevFileDiagnostic', 
+vim.api.nvim_create_user_command('GotoPrevFileDiagnostic',
     function(opts)
         local prev_diagnostic = vim.diagnostic.get_next()
         vim.diagnostic.jump({diagnostic = prev_diagnostic})
