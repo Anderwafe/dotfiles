@@ -1,5 +1,11 @@
 #!/usr/bin/lua
 
+-- for local config params
+local config = {}
+config.plugins = {}
+config.plugins.isLspConfigPermitted = true -- should lspconfig plugin be downloaded and some configurations loaded
+config.plugins.isNvimTreesitterPermitted = true -- should nvim treesitter plugin be downloaded
+
 -- options
 vim.o.autoindent = true
 vim.o.autoread = true
@@ -60,11 +66,36 @@ vim.g.loaded_ruby_provider = 0
 
 -- plugins
 
-vim.pack.add{
-  { src = 'https://github.com/neovim/nvim-lspconfig' },
-}
+if config.plugins.isLspConfigPermitted then
+    vim.pack.add{
+        { src = 'https://github.com/neovim/nvim-lspconfig' },
+    }
 
-vim.lsp.enable('clangd')
+    vim.lsp.enable('clangd')
+    vim.lsp.enable('csharp_ls')
+    vim.lsp.enable('jdtls')
+    vim.lsp.enable('lua_ls')
+end
+
+if config.plugins.isNvimTreesitterPermitted then
+    vim.pack.add{
+        {src = 'https://github.com/nvim-treesitter/nvim-treesitter.git'},
+    }
+end
+
+
+local hooks = function(ev)
+    local name, kind = ev.data.spec.name, ev.data.kind
+
+    if name == 'nvim-treesitter' and kind == 'update' then
+        if not ev.data.active then
+            vim.cmd.packadd('nvim-treesitter')
+        end
+        vim.cmd('TSUpdate')
+    end
+end
+
+vim.api.nvim_create_autocmd('PackChanged', { callback = hooks })
 
 -- filetypes
 
