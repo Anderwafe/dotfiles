@@ -3,9 +3,18 @@
 -- for local config params
 local config = {}
 config.plugins = {}
-config.plugins.isLspConfigPermitted = true -- should lspconfig plugin be downloaded and some configurations loaded
-config.plugins.isNvimTreesitterPermitted = true -- should nvim treesitter plugin be downloaded
+
+config.plugins.lsp_config = {}
+config.plugins.lsp_config.isEnabled = true -- should lspconfig plugin be downloaded and some configurations loaded
+config.plugins.lsp_config.defaultEnabledConfigs = {
+    'clangd',
+    'csharp_ls',
+    'jdtls',
+    'lua_ls',
+}
+
 config.plugins.nvimTreesitter = {}
+config.plugins.nvimTreesitter.isEnabled = true -- should nvim treesitter plugin be downloaded
 config.plugins.nvimTreesitter.defaultInstallParsers = {
     -- 'html',
     -- 'html_tags',
@@ -91,18 +100,15 @@ vim.g.loaded_ruby_provider = 0
 
 -- plugins
 
-if config.plugins.isLspConfigPermitted then
+if config.plugins.lsp_config.isEnabled then
     vim.pack.add{
         { src = 'https://github.com/neovim/nvim-lspconfig' },
     }
 
-    vim.lsp.enable('clangd')
-    vim.lsp.enable('csharp_ls')
-    vim.lsp.enable('jdtls')
-    vim.lsp.enable('lua_ls')
+    vim.lsp.enable(config.plugins.lsp_config.defaultEnabledConfigs);
 end
 
-if config.plugins.isNvimTreesitterPermitted then
+if config.plugins.nvimTreesitter.isEnabled then
     vim.pack.add{
         {src = 'https://github.com/nvim-treesitter/nvim-treesitter.git'},
     }
