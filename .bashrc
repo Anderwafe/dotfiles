@@ -61,12 +61,13 @@ EXEPREFIX='/usr/bin/env'
 
 # ========================          EXPORTS          ======================== #
 export PS1="[\u@\h \W]\$ "
-# export SHELL="$EXEPREFIX bash"
+# export SHELL="bash"
 export COLORTERM='truecolor'
-export EDITOR="$EXEPREFIX nvim"
-export VISUAL="$EXEPREFIX nvim"
-export PAGER="$EXEPREFIX less"
-export BROWSER="$EXEPREFIX zen-browser"
+export EDITOR="nvim"
+export VISUAL="nvim"
+export PAGER="less --incsearch"
+export MANPAGER="less --incsearch"
+export BROWSER="firefox"
 export LANG='ru_RU.UTF-8' 
 export LANGUAGE='ru_RU.UTF-8:be_BY.UTF-8:en_US.UTF-8' # used to set messages languages (as LC_MESSAGES) to a multi-valued value. `man locale(7)`. [GNU gettext with description of var](https://www.gnu.org/software/gettext/manual/html_node/The-LANGUAGE-variable.html)
 export MANPATH='' # "$EDITOR /etc/profile"
@@ -98,14 +99,15 @@ export DOTNET_CLI_TELEMETRY_OPTOUT=1
 
 ## ------------------------     SHITTY JAVA env      ------------------------ #
 export _JAVA_AWT_WM_NONREPARENTING=1
+export AWT_TOOLKIT=MToolkit
 export _JAVA_OPTIONS='-Dawt.useSystemAAFontSettings=on'
 export JAVA_FONTS=/usr/share/fonts/TTF
 
 # ========================          ALIASES          ======================== #
 ##alias ls='ls --color=auto'
 ##alias grep='grep --color=auto'
-alias xxd="$EXEPREFIX xxd -c 16 -g 1"
-alias octave="$EXEPREFIX octave --gui"
+alias xxd="xxd -c 16 -g 1"
+alias octave="octave --gui"
 
 ## on/off disables/enables history saving onto disk. can be used for secure gpg usage.
 alias secure_mode_on='set +o history'
