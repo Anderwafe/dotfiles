@@ -1,0 +1,12 @@
+(defcfg
+    process-unmapped-keys yes
+    danger-enable-cmd no
+    log-layer-changes no)
+
+(defsrc)
+(deflayermap (base-layer)
+    left (fork left (unmod home) (lalt))
+    right (fork right (unmod end) (lalt))
+    up (fork up (unmod pgup) (lalt))
+    down (fork down (unmod pgdn) (lalt)))
+

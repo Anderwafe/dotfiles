@@ -1,0 +1,12 @@
+[Unit]
+Description=Kanata keyboard remapper
+Documentation=https://github.com/jtroo/kanata
+
+[Service]
+Type=simple
+ExecStart=/bin/kanata --emergency-exit-code='-1' --no-wait --cfg CONFIG_PATH
+Restart=on-failure
+RestartSec=1000
+
+[Install]
+WantedBy=default.target
