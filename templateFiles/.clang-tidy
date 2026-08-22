@@ -1,0 +1,1 @@
+Checks: '-*,readability*,portability*,performance*,openmp*,modernize*,misc*,cppcoreguidelines*,concurrency*,clang-analyzer*,bugprone*,-modernize-use-trailing-return-type,-misc-non-private-member-variables-in-classes,-cppcoreguidelines-avoid-do-while'

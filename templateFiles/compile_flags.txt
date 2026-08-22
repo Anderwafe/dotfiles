@@ -1,0 +1,6 @@
+-std=c++26
+-pedantic
+-Weverything
+-Wno-c++98-compat
+-Wno-c++98-compat-pedantic
+-Wno-c++20-extensions
