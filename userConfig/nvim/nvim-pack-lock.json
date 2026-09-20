@@ -1,11 +1,35 @@
 {
   "plugins": {
+    "mini.ai": {
+      "rev": "cb02c5444613475b7edf0c8dc98264c1c857aa6e",
+      "src": "https://github.com/nvim-mini/mini.ai"
+    },
+    "mini.align": {
+      "rev": "77d7446b9f2452193f13ced9fb73a8b3aa4a4f4d",
+      "src": "https://github.com/nvim-mini/mini.align"
+    },
+    "mini.jump": {
+      "rev": "6a1688315d69e4f8428d529e194714447b0d4e82",
+      "src": "https://github.com/nvim-mini/mini.jump"
+    },
+    "mini.move": {
+      "rev": "48fcaac289a19b8eff2fd5fe203267d478a8abdc",
+      "src": "https://github.com/nvim-mini/mini.move"
+    },
+    "mini.notify": {
+      "rev": "13df5edffc3e27937b166a0f25a8329b46e15a4e",
+      "src": "https://github.com/nvim-mini/mini.notify"
+    },
+    "mini.surround": {
+      "rev": "8d5d0c5aa92449368ac251e85451d79d8f69d296",
+      "src": "https://github.com/nvim-mini/mini.surround"
+    },
     "nvim-lspconfig": {
-      "rev": "221c43884319e791519f0d6c94a7f2fbcd653278",
+      "rev": "ffd261c09c3dabd0bf1a438f47a8ae3b22f3c3ff",
       "src": "https://github.com/neovim/nvim-lspconfig"
     },
     "nvim-treesitter": {
-      "rev": "e82ef6ae2c3eeb96c6916b29917f96bf630b2cdb",
+      "rev": "f603a2f4da48728f80257fb5fbb90145fd1dc173",
       "src": "https://github.com/nvim-treesitter/nvim-treesitter.git"
     }
   }
