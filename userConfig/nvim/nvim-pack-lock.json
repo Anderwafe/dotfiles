@@ -16,10 +16,6 @@
       "rev": "48fcaac289a19b8eff2fd5fe203267d478a8abdc",
       "src": "https://github.com/nvim-mini/mini.move"
     },
-    "mini.notify": {
-      "rev": "13df5edffc3e27937b166a0f25a8329b46e15a4e",
-      "src": "https://github.com/nvim-mini/mini.notify"
-    },
     "mini.surround": {
       "rev": "8d5d0c5aa92449368ac251e85451d79d8f69d296",
       "src": "https://github.com/nvim-mini/mini.surround"

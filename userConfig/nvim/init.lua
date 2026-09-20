@@ -51,8 +51,6 @@ config.plugins.mini.surround = {}
 config.plugins.mini.surround.isEnabled = true -- should mini.nvim-surround plugin be downloaded
 config.plugins.mini.jump = {}
 config.plugins.mini.jump.isEnabled = true -- should mini.nvim-jump plugin be downloaded
-config.plugins.mini.notify = {}
-config.plugins.mini.notify.isEnabled = true -- should mini.nvim-jump plugin be downloaded
 
 -- options
 vim.o.autoindent     = true
@@ -84,6 +82,8 @@ vim.o.title          = true
 vim.o.virtualedit    = "block"
 vim.o.wrap           = true
 vim.o.complete       = ".,w,b,u,i,t,d" -- for .c files
+vim.o.winblend       = 15
+vim.o.winborder      = 'single'
 vim.opt.cino:append("l1")
 vim.opt.cino:append("b1")
 vim.opt.cino:append("g0")
@@ -110,12 +110,8 @@ vim.g.loaded_ruby_provider = 0
 vim.diagnostic.config {
     -- update_in_insert = false,
     severity_sort = true,
-    float = { border = 'rounded', source = 'if_many', scope = 'cursor' },
-    -- underline = { severity = { min = vim.diagnostic.severity.WARN } },
-
-    -- Can switch between these as you prefer
-    -- virtual_text = false, -- Text shows up at the end of the line
-    -- virtual_lines = false, -- Text shows up underneath the line, with virtual lines
+    float = { source = 'if_many', scope = 'cursor' },
+    underline = { severity = { min = vim.diagnostic.severity.ERROR } },
 
     -- Auto open the float, so you can easily read the errors when jumping with `[d` and `]d`
     jump = {
@@ -204,19 +200,6 @@ if config.plugins.mini.jump.isEnabled then
     require('mini.jump').setup()
 end
 
-if config.plugins.mini.notify.isEnabled then
-    vim.pack.add{
-        { src = 'https://github.com/nvim-mini/mini.notify' },
-    }
-
-    require('mini.notify').setup()
-    vim.notify = MiniNotify.make_notify{
-        ERROR = { duration = 5000 },
-        WARN  = { duration = 4000 },
-        INFO  = { duration = 3000 },
-    }
-end
-
 
 local hooks = function(ev)
     local name, kind = ev.data.spec.name, ev.data.kind
@@ -233,12 +216,12 @@ vim.api.nvim_create_autocmd('PackChanged', { callback = hooks })
 
 require('vim._core.ui2').enable({
     enable = true, -- Whether to enable or disable the UI.
-    msg = { -- Options related to the message module.
-        ---@type string|table<string, 'cmd'|'msg'|'pager'> Default message target
-        ---or table mapping |ui-messages| kinds, triggers and IDs to a target.
-        ---Table keys are matched as a Lua pattern to the message ID. 'default'
-        ---mapping applies to any omitted kind: { default = 'cmd', progress = 'msg' }.
-        targets = 'cmd',
+    msg = {
+        -- targets = {
+        --     [""] = "msg",
+        --     empty = "cmd",
+        --     help ui-messages for more targets
+        -- },
         dialog = { -- Options related to dialog window.
             height = 0.5, -- Maximum height.
         },
@@ -268,20 +251,118 @@ vim.keymap.set('t', "<Esc><Esc>", "<C-\\><C-n>")
 
 ------- auto commands
 
--- Highlight when yanking (copying) text
---  Try it with `yap` in normal mode
---  See `:help vim.hl.on_yank()`
+do
+    -- sets msg buffer style to floating window
+    vim.api.nvim_create_autocmd("FileType", {
+        pattern = "msg",
+        callback = function()
+            local ui2 = require("vim._core.ui2")
+            local win = ui2.wins and ui2.wins.msg
+            if win and vim.api.nvim_win_is_valid(win) then
+                vim.api.nvim_set_option_value(
+                    "winhighlight",
+                    "Normal:NormalFloat,FloatBorder:FloatBorder",
+                    { scope = "local", win = win }
+                )
+            end
+        end,
+    })
+
+    -- sets msg floating windows buffer position to right upper corner
+    local ui2 = require("vim._core.ui2")
+    local msgs = require("vim._core.ui2.messages")
+    local orig_set_pos = msgs.set_pos
+    msgs.set_pos = function(tgt)
+        orig_set_pos(tgt)
+        if (tgt == "msg" or tgt == nil) and vim.api.nvim_win_is_valid(ui2.wins.msg) then
+            pcall(vim.api.nvim_win_set_config, ui2.wins.msg, {
+                relative = "editor",
+                anchor = "NE",
+                row = 1,
+                col = vim.o.columns - 1,
+            })
+        end
+    end
+end
+
 vim.api.nvim_create_autocmd('TextYankPost', {
     desc = 'Highlight when yanking (copying) text',
     group = vim.api.nvim_create_augroup('kickstart-highlight-yank', { clear = true }),
     callback = function() vim.hl.on_yank() end,
 })
 
+vim.api.nvim_create_autocmd('LspProgress', {
+  callback = function(ev)
+    local data = ev.data
+    local value = data.params.value
+
+    local progressMessage = nil
+    local progressStatus = nil
+    local progressTitle = value.title or 'Generic LSP work'
+
+    if value.kind == 'begin' then
+        progressMessage = value.message or 'start'
+        progressStatus = 'running'
+    elseif value.kind == 'report' then
+        progressMessage = value.message or 'step'
+        progressStatus = 'running'
+    elseif value.kind == 'end' then
+        progressMessage = value.message or 'done'
+        progressStatus = 'success'
+    else
+        vim.print({message = 'unknown progress kind', body = data})
+        progressMessage = value.message or 'nil message'
+        progressStatus = 'failed'
+    end
+
+    vim.api.nvim_echo({ { progressMessage } }, true, {
+      id = 'lsp.' .. data.client_id .. "." .. progressTitle,
+      kind = 'progress',
+      source = 'vim.lsp',
+      title = progressTitle,
+      status = progressStatus,
+      percent = value.percentage,
+    })
+  end,
+})
+
+-- do
+--     -- has potential to fix problem with wrong lines wrap in signature-help window
+--     -- but closes window on signatures cycling for now
+--     local openFloatingPreviewBackup = vim.lsp.util.open_floating_preview
+--     vim.lsp.util.open_floating_preview = function(contents, syntax, opts)
+--         local contentsMaxWidth = 0
+--         for idx,content in ipairs(contents) do
+--             if contentsMaxWidth < string.len(content) then
+--                 contentsMaxWidth = string.len(content)
+--             end
+--         end
+--         local contentsMaxHeight = #contents
+--         opts.width = contentsMaxWidth
+--         opts.height = contentsMaxHeight
+--         local result = openFloatingPreviewBackup(contents, syntax, opts)
+--         return result
+--     end
+-- end
+
 vim.api.nvim_create_autocmd('LspAttach', {
     callback = function(event)
         local map = function(keys, func, desc, mode)
             mode = mode or 'n'
             vim.keymap.set(mode, keys, func, { buffer = event.buf, desc = 'LSP: ' .. desc })
+        end
+
+        -- 'fixes' the problem with not visible ultra-wide signatures
+        local sighelpbackup = vim.lsp.buf.signature_help
+        vim.lsp.buf.signature_help = function (conf)
+            conf = conf or {}
+            -- uncomment height and width to see all and always ☺  
+            conf.max_height = math.floor(vim.o.lines*0.8)
+            -- conf.height = conf.max_height
+            conf.max_width = math.floor(vim.o.columns*0.8)
+            -- conf.width = conf.max_width
+            conf.wrap = false
+            sighelpbackup(conf)
         end
 
         -- The following code creates a keymap to toggle inlay hints in your
@@ -297,9 +378,9 @@ vim.api.nvim_create_autocmd('LspAttach', {
 
 ------ defined user commands
 
-vim.api.nvim_create_user_command('ShowLineActions', 'lua vim.lsp.buf.code_action()', {})
-
 vim.api.nvim_create_user_command('DiffOrig', 'vert new | set buftype=nofile | read ++edit # | 0d_ | diffthis | wincmd p | diffthis', {})
+
+vim.api.nvim_create_user_command('ShowLineActions', 'lua vim.lsp.buf.code_action()', {})
 
 vim.api.nvim_create_user_command('ShowLineDiagnostics',
     function(opts)
@@ -330,7 +411,9 @@ vim.api.nvim_create_user_command('GotoPrevFileDiagnostic',
 
 -- colorscheme
 
-vim.cmd.colorscheme("falcon")
+-- TODO: check new colorscheme https://github.com/thesimonho/kanagawa-paper.nvim
+-- vim.cmd.colorscheme("falcon")
+-- vim.cmd.colorscheme("slate")
 
 -- Platform-dependent
 
