@@ -1,5 +1,9 @@
 {
   "plugins": {
+    "kanagawa-paper.nvim": {
+      "rev": "ecf19801a2673054c19421d82b766f7641688320",
+      "src": "https://github.com/thesimonho/kanagawa-paper.nvim"
+    },
     "mini.ai": {
       "rev": "cb02c5444613475b7edf0c8dc98264c1c857aa6e",
       "src": "https://github.com/nvim-mini/mini.ai"
@@ -20,6 +24,10 @@
       "rev": "8d5d0c5aa92449368ac251e85451d79d8f69d296",
       "src": "https://github.com/nvim-mini/mini.surround"
     },
+    "no-clown-fiesta.nvim": {
+      "rev": "04b808e9769ded988089772ffcaf08d92d75d927",
+      "src": "https://github.com/aktersnurra/no-clown-fiesta.nvim"
+    },
     "nvim-lspconfig": {
       "rev": "ffd261c09c3dabd0bf1a438f47a8ae3b22f3c3ff",
       "src": "https://github.com/neovim/nvim-lspconfig"
@@ -27,6 +35,10 @@
     "nvim-treesitter": {
       "rev": "f603a2f4da48728f80257fb5fbb90145fd1dc173",
       "src": "https://github.com/nvim-treesitter/nvim-treesitter.git"
+    },
+    "rasmus.nvim": {
+      "rev": "49f7ee7bf3eb00db52c77f84b15bc69f318bafc1",
+      "src": "https://github.com/kvrohit/rasmus.nvim"
     }
   }
 }

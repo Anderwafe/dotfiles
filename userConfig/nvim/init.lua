@@ -1,6 +1,12 @@
 #!/usr/bin/lua
 
 -- for local config params
+-- TODO: rework config table:
+-- 1. config is global-local table with entities
+-- 1. in config table we have various categories: plugins, colorschemes, etc
+-- 1. in categories we have items: lsp_config plugin, etc
+-- 1. every item should contain required fields: isEnabled, settings, uri
+-- 1. if the middle of the init.lua we should iterate on config categories items and operate on them
 local config = {}
 config.plugins = {}
 
@@ -52,6 +58,14 @@ config.plugins.mini.surround.isEnabled = true -- should mini.nvim-surround plugi
 config.plugins.mini.jump = {}
 config.plugins.mini.jump.isEnabled = true -- should mini.nvim-jump plugin be downloaded
 
+config.colorschemes = {}
+config.colorschemes.kanagawa_paper = {}
+config.colorschemes.kanagawa_paper.isEnabled = true
+config.colorschemes.rasmus = {}
+config.colorschemes.rasmus.isEnabled = true
+config.colorschemes.no_clown_fiesta = {}
+config.colorschemes.no_clown_fiesta.isEnabled = true
+
 -- options
 vim.o.autoindent     = true
 vim.o.autoread       = true
@@ -61,7 +75,6 @@ vim.opt.backspace    = {"indent","eol","start"}
 vim.opt.belloff      = {"all"}
 vim.o.breakindent    = true -- every wrapped line will continue visualy indented
 vim.opt.clipboard:append("unnamedplus")
-vim.o.completeopt    = "menuone,preview,noinsert"
 vim.o.showfulltag    = true
 vim.o.confirm        = true
 vim.o.cursorline     = true
@@ -81,7 +94,9 @@ vim.o.tabstop        = 4
 vim.o.title          = true
 vim.o.virtualedit    = "block"
 vim.o.wrap           = true
+vim.o.autocomplete   = false
 vim.o.complete       = ".,w,b,u,i,t,d" -- for .c files
+vim.o.completeopt    = "fuzzy,menuone,noinsert,noselect,popup"
 vim.o.winblend       = 15
 vim.o.winborder      = 'single'
 vim.opt.cino:append("l1")
@@ -151,6 +166,12 @@ if config.plugins.mini.ai.isEnabled then
 
     require('mini.ai').setup{
         search_method = 'cover_or_nearest',
+        mappings = {
+            around_next = '<Leader>an',
+            inside_next = '<Leader>in',
+            around_last = '<Leader>al',
+            inside_last = '<Leader>il',
+        },
     }
 end
 
@@ -198,6 +219,24 @@ if config.plugins.mini.jump.isEnabled then
     }
 
     require('mini.jump').setup()
+end
+
+if config.colorschemes.kanagawa_paper.isEnabled then
+    vim.pack.add{
+        { src = 'https://github.com/thesimonho/kanagawa-paper.nvim' },
+    }
+end
+
+if config.colorschemes.rasmus.isEnabled then
+    vim.pack.add{
+        { src = 'https://github.com/kvrohit/rasmus.nvim' },
+    }
+end
+
+if config.colorschemes.no_clown_fiesta.isEnabled then
+    vim.pack.add{
+        { src = 'https://github.com/aktersnurra/no-clown-fiesta.nvim' },
+    }
 end
 
 
@@ -383,37 +422,40 @@ vim.api.nvim_create_user_command('DiffOrig', 'vert new | set buftype=nofile | re
 vim.api.nvim_create_user_command('ShowLineActions', 'lua vim.lsp.buf.code_action()', {})
 
 vim.api.nvim_create_user_command('ShowLineDiagnostics',
-    function(opts)
+    function()
         vim.diagnostic.open_float()
     end, {})
 
 vim.api.nvim_create_user_command('ShowFileDiagnostics',
-    function(opts)
+    function()
         vim.diagnostic.setqflist()
     end, {})
 
 vim.api.nvim_create_user_command('LoadFileDiagnostics',
-    function(opts)
+    function()
         vim.diagnostic.setqflist({open = false})
     end, {})
 
 vim.api.nvim_create_user_command('GotoNextFileDiagnostic',
-    function(opts)
+    function()
         local next_diagnostic = vim.diagnostic.get_next()
         vim.diagnostic.jump({diagnostic = next_diagnostic})
     end, {})
 
 vim.api.nvim_create_user_command('GotoPrevFileDiagnostic',
-    function(opts)
+    function()
         local prev_diagnostic = vim.diagnostic.get_next()
         vim.diagnostic.jump({diagnostic = prev_diagnostic})
     end, {})
 
 -- colorscheme
 
--- TODO: check new colorscheme https://github.com/thesimonho/kanagawa-paper.nvim
+
+-- vim.cmd.colorscheme('kanagawa-paper-ink')
 -- vim.cmd.colorscheme("falcon")
 -- vim.cmd.colorscheme("slate")
+-- vim.cmd.colorscheme("rasmus")
+vim.cmd.colorscheme("no-clown-fiesta-dark")
 
 -- Platform-dependent
 
