@@ -123,10 +123,26 @@ vim.g.loaded_python3_provider = 0
 vim.g.loaded_ruby_provider = 0
 
 vim.diagnostic.config {
-    -- update_in_insert = false,
     severity_sort = true,
-    float = { source = 'if_many', scope = 'cursor' },
-    underline = { severity = { min = vim.diagnostic.severity.ERROR } },
+    float = { source = true, scope = 'line' },
+    underline = { severity = { min = vim.diagnostic.severity.WARN } },
+    virtual_text = false,
+    virtual_lines = false,
+
+    signs = {
+        text = {
+            [vim.diagnostic.severity.ERROR] = '',
+            [vim.diagnostic.severity.WARN] = '',
+            [vim.diagnostic.severity.INFO] = '',
+            [vim.diagnostic.severity.HINT] = '',
+        },
+        numhl = {
+            [vim.diagnostic.severity.ERROR] = 'ErrorMsg',
+            [vim.diagnostic.severity.WARN] = 'WarningMsg',
+            [vim.diagnostic.severity.INFO] = '',
+            [vim.diagnostic.severity.HINT] = '',
+        },
+    },
 
     -- Auto open the float, so you can easily read the errors when jumping with `[d` and `]d`
     jump = {
