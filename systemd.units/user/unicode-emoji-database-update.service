@@ -1,0 +1,10 @@
+[Unit]
+Description=Update unicode emoji local database
+After=network.target
+
+[Service]
+Type=oneshot
+ExecStart=%h/.local/bin/UpdateEmojiDatabase.sh
+
+[Install]
+WantedBy=default.target
