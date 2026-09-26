@@ -1,0 +1,6 @@
+#!/usr/bin/env sh
+set -xe
+
+# x0vncserver -localhost -rfbauth ~/.config/tigervnc/passwd &
+x0vncserver -localhost -SecurityTypes none -AcceptSetDesktopSize=0 -IdleTimeout=900 -QueryConnect=0
+# setxkbmap -layout us,ru -option grp:alt_shift_toggle
