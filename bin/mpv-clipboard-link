@@ -1,0 +1,6 @@
+#!/usr/bin/env sh
+
+set -xe
+
+mpv `xclip -sel clip -t STRING -o`
+notify-send -t 1000 -u low -a "mpv-clipboard-link" "mpv-clipboard-link done"

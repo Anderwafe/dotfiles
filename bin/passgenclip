@@ -1,0 +1,7 @@
+#!/bin/env sh
+
+set -xe
+
+passgen.sh | xclip -i -sel clip
+notify-send -t 1000 -u low -a "passgenclip" "passgenclip done"
+

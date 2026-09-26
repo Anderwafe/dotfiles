@@ -1,0 +1,7 @@
+#!/usr/bin/env sh
+
+set -xe
+
+zbarcam -1 --raw > /tmp/qr-code-scan-cam.tmp 2> /tmp/qr-code-scan-cam.err.tmp && (xclip -sel clip -i < /tmp/qr-code-scan-cam.tmp && notify-send -t 1000 -u low -a "qr-code-scan-cam" "qr-code-scan-cam done") || (notify-send -t 5000 -u normal -a "qr-code-scan-cam" "`cat /tmp/qr-code-scan-cam.err.tmp | head -n 2`")
+
+rm /tmp/qr-code-scan-cam.err.tmp /tmp/qr-code-scan-cam.tmp

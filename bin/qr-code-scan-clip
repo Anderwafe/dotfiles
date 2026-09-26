@@ -1,0 +1,7 @@
+#!/usr/bin/env sh
+
+set -xe
+
+xclip -sel clip -o | magick - PNG:- | zbarimg - -1 --raw > /tmp/qr-code-scan-clip.tmp 2> /tmp/qr-code-scan-clip.err.tmp && (xclip -sel clip -i < /tmp/qr-code-scan-clip.tmp && notify-send -t 1000 -u low -a "qr-code-scan-clip" "qr-code-scan-clip done") || (notify-send -t 5000 -u normal -a "qr-code-scan-clip" "`cat /tmp/qr-code-scan-clip.err.tmp | head -n 2`")
+
+rm /tmp/qr-code-scan-clip.err.tmp /tmp/qr-code-scan-clip.tmp

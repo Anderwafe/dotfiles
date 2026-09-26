@@ -1,0 +1,6 @@
+#!/usr/bin/env sh
+
+set -xe
+
+xclip -sel clip -o | magick - PNG:- | tesseract - - -l rus+eng+jpn+jpn_vert+kan+kat+bel+osd > /tmp/ocr-png-clip.tmp 2> /tmp/ocr-png-clip.err.tmp && (xclip -sel clip -i < /tmp/ocr-png-clip.tmp && notify-send -t 1000 -u low -a "ocr-png-clip" "ocr-png-clip done") || (notify-send -t 5000 -u normal -a "ocr-png-clip" "`cat /tmp/ocr-png-clip.err.tmp | head -n 2`")
+rm /tmp/ocr-png-clip.tmp /tmp/ocr-png-clip.err.tmp
