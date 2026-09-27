@@ -58,6 +58,9 @@ config.plugins.mini.surround.isEnabled = true -- should mini.nvim-surround plugi
 config.plugins.mini.jump = {}
 config.plugins.mini.jump.isEnabled = true -- should mini.nvim-jump plugin be downloaded
 
+config.plugins.tatr = {}
+config.plugins.tatr.isEnabled = true -- should tatr plugin be downloaded
+
 config.colorschemes = {}
 config.colorschemes.kanagawa_paper = {}
 config.colorschemes.kanagawa_paper.isEnabled = true
@@ -237,6 +240,15 @@ if config.plugins.mini.jump.isEnabled then
     require('mini.jump').setup()
 end
 
+if config.plugins.tatr.isEnabled then
+    vim.pack.add{
+        { src = 'https://github.com/Anderwafe/tatr.nvim.git' },
+    }
+
+    require('tatr').setup()
+end
+
+
 if config.colorschemes.kanagawa_paper.isEnabled then
     vim.pack.add{
         { src = 'https://github.com/thesimonho/kanagawa-paper.nvim' },
@@ -251,7 +263,8 @@ end
 
 if config.colorschemes.no_clown_fiesta.isEnabled then
     vim.pack.add{
-        { src = 'https://github.com/aktersnurra/no-clown-fiesta.nvim' },
+        { src = 'https://github.com/Anderwafe/no-clown-fiesta.nvim',
+            version = 'my_master' },
     }
 end
 
