@@ -57,9 +57,16 @@ config.plugins.mini.surround = {}
 config.plugins.mini.surround.isEnabled = true -- should mini.nvim-surround plugin be downloaded
 config.plugins.mini.jump = {}
 config.plugins.mini.jump.isEnabled = true -- should mini.nvim-jump plugin be downloaded
+config.plugins.mini.snippets = {}
+config.plugins.mini.snippets.isEnabled = true -- should mini.nvim-snippets plugin be downloaded
+config.plugins.mini.completions = {}
+config.plugins.mini.completions.isEnabled = false -- should mini.nvim-completions plugin be downloaded
 
 config.plugins.tatr = {}
 config.plugins.tatr.isEnabled = true -- should tatr plugin be downloaded
+
+config.plugins.friendlysnippets = {}
+config.plugins.friendlysnippets.isEnabled = true
 
 config.colorschemes = {}
 config.colorschemes.kanagawa_paper = {}
@@ -101,7 +108,7 @@ vim.o.wrap           = true
 vim.o.autocomplete   = false
 vim.o.complete       = ".,w,b,u,i,t,d" -- for .c files
 vim.o.completeopt    = "fuzzy,menuone,noinsert,popup"
-vim.o.winblend       = 15
+vim.o.winblend       = 0
 vim.o.winborder      = 'single'
 vim.opt.cino:append("l1")
 vim.opt.cino:append("b1")
@@ -185,7 +192,7 @@ if config.plugins.mini.ai.isEnabled then
     }
 
     require('mini.ai').setup{
-        search_method = 'cover_or_nearest',
+        search_method = 'cover_or_next',
         mappings = {
             around_next = '<Leader>an',
             inside_next = '<Leader>in',
@@ -239,6 +246,46 @@ if config.plugins.mini.jump.isEnabled then
     }
 
     require('mini.jump').setup()
+end
+
+if config.plugins.friendlysnippets.isEnabled then
+    vim.pack.add{
+        { src = 'https://github.com/rafamadriz/friendly-snippets.git' },
+    }
+end
+
+if config.plugins.mini.snippets.isEnabled then
+    vim.pack.add{
+        { src = 'https://github.com/nvim-mini/mini.snippets' },
+    }
+
+    local gen_loader = require('mini.snippets').gen_loader
+    require('mini.snippets').setup{
+        snippets = {
+            gen_loader.from_runtime('global.{json,code-snippets,lua}')
+        },
+    }
+    vim.api.nvim_create_autocmd('FileType', {
+        callback = function(args) 
+            local gen_loader = require('mini.snippets').gen_loader
+            require('mini.snippets').setup{
+                snippets = {
+                    gen_loader.from_lang()
+                },
+            }
+        end
+    })
+    require('mini.snippets').start_lsp_server()
+end
+
+if config.plugins.mini.completions.isEnabled then
+    vim.pack.add{
+        { src = 'https://github.com/nvim-mini/mini.completion.git' },
+    }
+
+    require('mini.completion').setup{
+        delay = { completion=-1, info=-1, signature=-1 },
+    }
 end
 
 if config.plugins.tatr.isEnabled then
@@ -395,96 +442,89 @@ vim.api.nvim_create_autocmd('LspProgress', {
   end,
 })
 
--- do
---     -- has potential to fix problem with wrong lines wrap in signature-help window
---     -- but closes window on signatures cycling for now
---     local openFloatingPreviewBackup = vim.lsp.util.open_floating_preview
---     vim.lsp.util.open_floating_preview = function(contents, syntax, opts)
---         local contentsMaxWidth = 0
---         for idx,content in ipairs(contents) do
---             if contentsMaxWidth < string.len(content) then
---                 contentsMaxWidth = string.len(content)
---             end
---         end
---         local contentsMaxHeight = #contents
---         opts.width = contentsMaxWidth
---         opts.height = contentsMaxHeight
---         local result = openFloatingPreviewBackup(contents, syntax, opts)
---         return result
---     end
--- end
-
-vim.api.nvim_create_autocmd('LspAttach', {
-    callback = function(event)
-        local map = function(keys, func, desc, mode)
-            mode = mode or 'n'
-            vim.keymap.set(mode, keys, func, { buffer = event.buf, desc = 'LSP: ' .. desc })
+do
+    -- fixes problem with wrong lines wrap in signature-help window
+    local openFloatingPreviewBackup = vim.lsp.util.open_floating_preview
+    vim.lsp.util.open_floating_preview = function(contents, syntax, opts)
+        local contentsMaxWidth = 0
+        local contentsMaxHeight = 0
+        for idx,content in ipairs(contents) do
+            if contentsMaxWidth < string.len(content) then
+                contentsMaxWidth = string.len(content)
+            end
+            if content:sub(1, 3) ~= '```' then
+                contentsMaxHeight += 1
+            end
         end
-
-        -- 'fixes' the problem with not visible ultra-wide signatures
-        local sighelpbackup = vim.lsp.buf.signature_help
-        vim.lsp.buf.signature_help = function (conf)
-            conf = conf or {}
-            -- uncomment height and width to see all and always ☺  
-            conf.max_height = math.floor(vim.o.lines*0.8)
-            -- conf.height = conf.max_height
-            conf.max_width = math.floor(vim.o.columns*0.8)
-            -- conf.width = conf.max_width
-            conf.wrap = false
-            sighelpbackup(conf)
+        if opts._update_win ~= nil then
+            vim.api.nvim_win_set_config(opts._update_win, { width = contentsMaxWidth, height = contentsMaxHeight, })
         end
+        -- opts.width = contentsMaxWidth
+        -- opts.height = contentsMaxHeight
+        local bufnr, winid = openFloatingPreviewBackup(contents, syntax, opts)
+        return bufnr, winid
+    end
+end
 
-        -- The following code creates a keymap to toggle inlay hints in your
-        -- code, if the language server you are using supports them
-        --
-        -- This may be unwanted, since they displace some of your code
-        local client = vim.lsp.get_client_by_id(event.data.client_id)
-        if client and client:supports_method('textDocument/inlayHint', event.buf) then
-            map('<leader>th', function() vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = event.buf }) end, '[T]oggle Inlay [H]ints')
-        end
-    end,
-})
+do
+    vim.api.nvim_create_autocmd('LspAttach', {
+        callback = function(event)
+            local map = function(keys, func, desc, mode)
+                mode = mode or 'n'
+                vim.keymap.set(mode, keys, func, { buffer = event.buf, desc = 'LSP: ' .. desc })
+            end
+
+            -- The following code creates a keymap to toggle inlay hints in your
+            -- code, if the language server you are using supports them
+            --
+            -- This may be unwanted, since they displace some of your code
+            local client = vim.lsp.get_client_by_id(event.data.client_id)
+            if client and client:supports_method('textDocument/inlayHint', event.buf) then
+                map('<leader>th', function() vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = event.buf }) end, '[T]oggle Inlay [H]ints')
+            end
+        end,
+    })
+end
+
 
 ------ defined user commands
 
 vim.api.nvim_create_user_command('DiffOrig', 'vert new | set buftype=nofile | read ++edit # | 0d_ | diffthis | wincmd p | diffthis', {})
 
-vim.api.nvim_create_user_command('ShowLineActions', 'lua vim.lsp.buf.code_action()', {})
+vim.api.nvim_create_user_command('ShowLineActions', 
+function()
+    vim.lsp.buf.code_action()
+end, {})
 
 vim.api.nvim_create_user_command('ShowLineDiagnostics',
-    function()
-        vim.diagnostic.open_float()
-    end, {})
+function()
+    vim.diagnostic.open_float()
+end, {})
 
 vim.api.nvim_create_user_command('ShowFileDiagnostics',
-    function()
-        vim.diagnostic.setqflist()
-    end, {})
+function()
+    vim.diagnostic.setqflist()
+end, {})
 
 vim.api.nvim_create_user_command('LoadFileDiagnostics',
-    function()
-        vim.diagnostic.setqflist({open = false})
-    end, {})
+function()
+    vim.diagnostic.setqflist({open = false})
+end, {})
 
 vim.api.nvim_create_user_command('GotoNextFileDiagnostic',
-    function()
-        local next_diagnostic = vim.diagnostic.get_next()
-        vim.diagnostic.jump({diagnostic = next_diagnostic})
-    end, {})
+function()
+    local next_diagnostic = vim.diagnostic.get_next()
+    vim.diagnostic.jump({diagnostic = next_diagnostic})
+end, {})
 
 vim.api.nvim_create_user_command('GotoPrevFileDiagnostic',
-    function()
-        local prev_diagnostic = vim.diagnostic.get_next()
-        vim.diagnostic.jump({diagnostic = prev_diagnostic})
-    end, {})
+function()
+    local prev_diagnostic = vim.diagnostic.get_next()
+    vim.diagnostic.jump({diagnostic = prev_diagnostic})
+end, {})
 
 -- colorscheme
 
-
--- vim.cmd.colorscheme('kanagawa-paper-ink')
--- vim.cmd.colorscheme("falcon")
--- vim.cmd.colorscheme("slate")
--- vim.cmd.colorscheme("rasmus")
 vim.cmd.colorscheme("no-clown-fiesta-dark")
 
 -- Platform-dependent

@@ -1,5 +1,9 @@
 {
   "plugins": {
+    "friendly-snippets": {
+      "rev": "b4d01b0fdf3c9a549961c2f9ffe8dc09be166219",
+      "src": "https://github.com/rafamadriz/friendly-snippets.git"
+    },
     "kanagawa-paper.nvim": {
       "rev": "ecf19801a2673054c19421d82b766f7641688320",
       "src": "https://github.com/thesimonho/kanagawa-paper.nvim"
@@ -19,6 +23,10 @@
     "mini.move": {
       "rev": "48fcaac289a19b8eff2fd5fe203267d478a8abdc",
       "src": "https://github.com/nvim-mini/mini.move"
+    },
+    "mini.snippets": {
+      "rev": "050638170639ceb7bef4e804507cbf209e565b2c",
+      "src": "https://github.com/nvim-mini/mini.snippets"
     },
     "mini.surround": {
       "rev": "33a2ebe5df8eb4751828fcba133e18ed0fbbdfab",
