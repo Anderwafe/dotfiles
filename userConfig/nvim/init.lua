@@ -70,6 +70,7 @@ config.colorschemes.no_clown_fiesta = {}
 config.colorschemes.no_clown_fiesta.isEnabled = true
 
 -- options
+vim.o.showmode       = false
 vim.o.autoindent     = true
 vim.o.autoread       = true
 vim.o.autowrite      = true
@@ -83,7 +84,7 @@ vim.o.confirm        = true
 vim.o.cursorline     = true
 vim.o.cursorcolumn   = false
 vim.o.expandtab      = true
-vim.o.fixendofline   = false
+vim.o.fixendofline   = true
 vim.o.incsearch      = true
 vim.o.linespace      = 0 -- change if font uses full char cell height
 vim.o.number         = true
@@ -99,7 +100,7 @@ vim.o.virtualedit    = "block"
 vim.o.wrap           = true
 vim.o.autocomplete   = false
 vim.o.complete       = ".,w,b,u,i,t,d" -- for .c files
-vim.o.completeopt    = "fuzzy,menuone,noinsert,noselect,popup"
+vim.o.completeopt    = "fuzzy,menuone,noinsert,popup"
 vim.o.winblend       = 15
 vim.o.winborder      = 'single'
 vim.opt.cino:append("l1")
@@ -114,7 +115,7 @@ vim.opt.cino:append("j1")
 vim.opt.cino:append("J1")
 vim.opt.cinkeys:append("0=break")
 
-vim.o.statusline = "%f:%l:%c%( t:%Y%) [%p%%]%( %m%) %= %h"
+vim.o.statusline = " %{mode()} | %f:%l:%c%( t:%Y%) [%p%%]%( %m%)"
 
 -- variables
 vim.g.mapleader = ' '
