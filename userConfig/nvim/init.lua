@@ -60,7 +60,7 @@ config.plugins.mini.jump.isEnabled = true -- should mini.nvim-jump plugin be dow
 config.plugins.mini.snippets = {}
 config.plugins.mini.snippets.isEnabled = true -- should mini.nvim-snippets plugin be downloaded
 config.plugins.mini.completions = {}
-config.plugins.mini.completions.isEnabled = false -- should mini.nvim-completions plugin be downloaded
+config.plugins.mini.completions.isEnabled = true -- should mini.nvim-completions plugin be downloaded
 
 config.plugins.tatr = {}
 config.plugins.tatr.isEnabled = true -- should tatr plugin be downloaded
@@ -286,6 +286,7 @@ if config.plugins.mini.completions.isEnabled then
     require('mini.completion').setup{
         delay = { completion=-1, info=-1, signature=-1 },
     }
+    vim.lsp.config('*', {capabilities = MiniCompletion.get_lsp_capabilities()})
 end
 
 if config.plugins.tatr.isEnabled then

@@ -16,6 +16,10 @@
       "rev": "77d7446b9f2452193f13ced9fb73a8b3aa4a4f4d",
       "src": "https://github.com/nvim-mini/mini.align"
     },
+    "mini.completion": {
+      "rev": "15fb3542b11f23b20e126c873111297f41d740e5",
+      "src": "https://github.com/nvim-mini/mini.completion.git"
+    },
     "mini.jump": {
       "rev": "6a1688315d69e4f8428d529e194714447b0d4e82",
       "src": "https://github.com/nvim-mini/mini.jump"
