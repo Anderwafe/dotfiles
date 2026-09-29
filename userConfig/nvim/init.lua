@@ -133,6 +133,12 @@ vim.g.loaded_perl_provider = 0
 vim.g.loaded_python3_provider = 0
 vim.g.loaded_ruby_provider = 0
 
+local recalculatePumMaxWidth = function()
+    vim.go.pummaxwidth =  math.ceil(0.6*vim.o.columns)
+end
+recalculatePumMaxWidth()
+
+
 vim.diagnostic.config {
     severity_sort = true,
     float = { source = true, scope = 'line' },
@@ -259,8 +265,10 @@ if config.plugins.mini.snippets.isEnabled then
         { src = 'https://github.com/nvim-mini/mini.snippets' },
     }
 
+
     local gen_loader = require('mini.snippets').gen_loader
     require('mini.snippets').setup{
+        mappings = { expand = '', jump_next = '', jump_prev = '' },
         snippets = {
             gen_loader.from_runtime('global.{json,code-snippets,lua}')
         },
@@ -268,14 +276,19 @@ if config.plugins.mini.snippets.isEnabled then
     vim.api.nvim_create_autocmd('FileType', {
         callback = function(args) 
             local gen_loader = require('mini.snippets').gen_loader
-            require('mini.snippets').setup{
-                snippets = {
-                    gen_loader.from_lang()
-                },
-            }
+            table.insert(require('mini.snippets').config.snippets, gen_loader.from_lang())
         end
     })
     require('mini.snippets').start_lsp_server()
+    local checkAndJump = function(direction)
+        if MiniSnippets.session.get() ~= nil then 
+            MiniSnippets.session.jump(direction)
+            return true
+        end
+        return false
+    end
+    vim.keymap.set('i', '<Tab>', function() if not checkAndJump('next') then return '\t' end end, { expr = true })
+    vim.keymap.set('i', '<S-Tab>', function() checkAndJump('prev') end)
 end
 
 if config.plugins.mini.completions.isEnabled then
@@ -285,8 +298,12 @@ if config.plugins.mini.completions.isEnabled then
 
     require('mini.completion').setup{
         delay = { completion=-1, info=-1, signature=-1 },
+        fallback_action = '<C-x><C-o>',
+        lsp_completion = {
+            source_func = 'completefunc',
+        }
     }
-    vim.lsp.config('*', {capabilities = MiniCompletion.get_lsp_capabilities()})
+    -- vim.lsp.config('*', {capabilities = MiniCompletion.get_lsp_capabilities()})
 end
 
 if config.plugins.tatr.isEnabled then
@@ -441,6 +458,12 @@ vim.api.nvim_create_autocmd('LspProgress', {
       percent = value.percentage,
     })
   end,
+})
+
+vim.api.nvim_create_autocmd('VimResized', {
+    callback = function()
+        recalculatePumMaxWidth()
+    end
 })
 
 do
