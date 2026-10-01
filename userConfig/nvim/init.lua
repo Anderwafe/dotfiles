@@ -477,7 +477,7 @@ do
                 contentsMaxWidth = string.len(content)
             end
             if content:sub(1, 3) ~= '```' then
-                contentsMaxHeight += 1
+                contentsMaxHeight = contentsMaxHeight + 1
             end
         end
         if opts._update_win ~= nil then
