@@ -1,0 +1,36 @@
+[init]
+    defaultBranch = master
+
+[color]
+    ui = auto
+
+[grep]
+    lineNumber = true
+    patternType = extended
+
+[commit]
+    verbose = true
+    gpgsign = true
+
+[tag]
+    gpgSign = true
+
+[pull]
+    rebase = true
+    ff = only
+
+[push]
+    default = current
+
+[merge]
+    tool = nvimdiff
+
+[diff]
+    tool = nvimdiff
+
+[safe]
+    directory = /mnt/sshfs_mountpoint/Music/music
+
+[mergetool "nvimdiff"]
+    cmd = nvim -d $LOCAL $REMOTE $MERGED -c '$wincmd w' -c 'wincmd J'
+
