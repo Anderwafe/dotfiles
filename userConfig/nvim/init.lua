@@ -59,8 +59,6 @@ config.plugins.mini.jump = {}
 config.plugins.mini.jump.isEnabled = true -- should mini.nvim-jump plugin be downloaded
 config.plugins.mini.snippets = {}
 config.plugins.mini.snippets.isEnabled = true -- should mini.nvim-snippets plugin be downloaded
-config.plugins.mini.completions = {}
-config.plugins.mini.completions.isEnabled = true -- should mini.nvim-completions plugin be downloaded
 
 config.plugins.tatr = {}
 config.plugins.tatr.isEnabled = true -- should tatr plugin be downloaded
@@ -265,10 +263,9 @@ if config.plugins.mini.snippets.isEnabled then
         { src = 'https://github.com/nvim-mini/mini.snippets' },
     }
 
-
     local gen_loader = require('mini.snippets').gen_loader
     require('mini.snippets').setup{
-        mappings = { expand = '', jump_next = '', jump_prev = '' },
+        mappings = { expand = '<C-j>', jump_next = '<C-l>', jump_prev = '<C-h>', stop = '<C-c>' },
         snippets = {
             gen_loader.from_runtime('global.{json,code-snippets,lua}')
         },
@@ -280,30 +277,6 @@ if config.plugins.mini.snippets.isEnabled then
         end
     })
     require('mini.snippets').start_lsp_server()
-    local checkAndJump = function(direction)
-        if MiniSnippets.session.get() ~= nil then 
-            MiniSnippets.session.jump(direction)
-            return true
-        end
-        return false
-    end
-    vim.keymap.set('i', '<Tab>', function() if not checkAndJump('next') then return '\t' end end, { expr = true })
-    vim.keymap.set('i', '<S-Tab>', function() checkAndJump('prev') end)
-end
-
-if config.plugins.mini.completions.isEnabled then
-    vim.pack.add{
-        { src = 'https://github.com/nvim-mini/mini.completion.git' },
-    }
-
-    require('mini.completion').setup{
-        delay = { completion=-1, info=-1, signature=-1 },
-        fallback_action = '<C-x><C-o>',
-        lsp_completion = {
-            source_func = 'completefunc',
-        }
-    }
-    -- vim.lsp.config('*', {capabilities = MiniCompletion.get_lsp_capabilities()})
 end
 
 if config.plugins.tatr.isEnabled then
@@ -483,8 +456,6 @@ do
         if opts._update_win ~= nil then
             vim.api.nvim_win_set_config(opts._update_win, { width = contentsMaxWidth, height = contentsMaxHeight, })
         end
-        -- opts.width = contentsMaxWidth
-        -- opts.height = contentsMaxHeight
         local bufnr, winid = openFloatingPreviewBackup(contents, syntax, opts)
         return bufnr, winid
     end
