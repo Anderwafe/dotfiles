@@ -28,9 +28,6 @@
 [diff]
     tool = nvimdiff
 
-[safe]
-    directory = /mnt/sshfs_mountpoint/Music/music
-
 [mergetool "nvimdiff"]
     cmd = nvim -d $LOCAL $REMOTE $MERGED -c '$wincmd w' -c 'wincmd J'
 

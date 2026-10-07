@@ -45,6 +45,10 @@
       "rev": "910fdf6f49e9dee7e7257c7d11a76b040fdfb9de",
       "src": "https://github.com/nvim-treesitter/nvim-treesitter.git"
     },
+    "obsidian.nvim": {
+      "rev": "1212014bb22a1f44a655e8e706659892b8e43e59",
+      "src": "https://github.com/obsidian-nvim/obsidian.nvim"
+    },
     "rasmus.nvim": {
       "rev": "49f7ee7bf3eb00db52c77f84b15bc69f318bafc1",
       "src": "https://github.com/kvrohit/rasmus.nvim"

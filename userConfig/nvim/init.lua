@@ -66,6 +66,9 @@ config.plugins.tatr.isEnabled = true -- should tatr plugin be downloaded
 config.plugins.friendlysnippets = {}
 config.plugins.friendlysnippets.isEnabled = true
 
+config.plugins.obsidian = {}
+config.plugins.obsidian.isEnabled = true
+
 config.colorschemes = {}
 config.colorschemes.kanagawa_paper = {}
 config.colorschemes.kanagawa_paper.isEnabled = true
@@ -108,6 +111,7 @@ vim.o.complete       = ".,w,b,u,i,t,d" -- for .c files
 vim.o.completeopt    = "fuzzy,menuone,noinsert,popup"
 vim.o.winblend       = 0
 vim.o.winborder      = 'single'
+vim.wo.conceallevel  = 0
 vim.opt.cino:append("l1")
 vim.opt.cino:append("b1")
 vim.opt.cino:append("g0")
@@ -285,6 +289,34 @@ if config.plugins.tatr.isEnabled then
     }
 
     require('tatr').setup()
+end
+
+if config.plugins.obsidian.isEnabled then
+    vim.pack.add{{src='https://github.com/obsidian-nvim/obsidian.nvim'}}
+
+    require("obsidian").setup {
+        legacy_commands = false,
+        ui = {
+            enable = false,
+        },
+        daily_notes = {
+            enabled = true,
+            folder = 'Daily',
+            default_tags = { "daily" },
+        },
+        unique_note = {
+            folder = 'Special',
+        },
+        link = {
+            auto_update = true,
+        },
+        workspaces = {
+            {
+                name = "My Vault",
+                path = "~/Obsidian/Vaults/MyVault/My vault",
+            },
+        },
+    }
 end
 
 

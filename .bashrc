@@ -29,39 +29,14 @@ function _dotnet_bash_complete()
 }
 complete -f -F _dotnet_bash_complete dotnet
 
-## edit and concate daily notes
-daily_notes_prefix="`xdg-user-dir DOCUMENTS`/notes/dated/"
-### creates and fills (if not exists) daily notes file, and returns path to it (by echo)
-get_daily_notes_path() {
-    [[ -d $daily_notes_prefix ]] || mkdir -p $daily_notes_prefix
-    local today_echofriendly="`date -Idate`"
-    local daily_notes_path=$daily_notes_prefix$today_echofriendly
-    [[ -s $daily_notes_path ]] || echo -e "# $today_echofriendly\n" > $daily_notes_path
-    echo $daily_notes_path
-}
-### return (by echo) long string of concatenated daily notes files
-concate_daily_notes() {
-    [[ -d $daily_notes_prefix ]] || mkdir -p $daily_notes_prefix
-    # ls --sort='name' --reverse -C1 $daily_notes_prefix
-    for iter in $(ls --sort="name" --reverse -C1 $daily_notes_prefix)
-    do
-        cat $daily_notes_prefix$iter
-        echo -e '\n\n'
-    done
-}
-cd_to_daily_notes_path() {
-    [[ -d $daily_notes_prefix ]] || mkdir -p $daily_notes_prefix
-    cd $daily_notes_prefix
-}
-alias dailynotes_edit='(cd_to_daily_notes_path; $EDITOR $(get_daily_notes_path))'
-alias dailynotes_showall='echo -e "$(concate_daily_notes)" | $PAGER'
+alias dailynotes_edit='nvim +"Obsidian today"'
+alias dailynotes_showall='nvim +"Obsidian dailies"'
 
 # ========================   Supporting variables   ========================= #
 EXEPREFIX='/usr/bin/env'
 
 # ========================          EXPORTS          ======================== #
 export PS1="[\u@\h \W]\$ "
-# export SHELL="bash"
 export COLORTERM='truecolor'
 export EDITOR="nvim"
 export VISUAL="nvim"
@@ -70,22 +45,18 @@ export MANPAGER="less --incsearch"
 export BROWSER="firefox"
 export LANG='ru_RU.UTF-8' 
 export LANGUAGE='ru_RU.UTF-8:be_BY.UTF-8:en_US.UTF-8' # used to set messages languages (as LC_MESSAGES) to a multi-valued value. `man locale(7)`. [GNU gettext with description of var](https://www.gnu.org/software/gettext/manual/html_node/The-LANGUAGE-variable.html)
-export MANPATH='' # "$EDITOR /etc/profile"
-# export MAIL="/var/mail/$USER/"
 
 ## ------------------------     History settings     ------------------------ #
 export HISTCONTROL='ignoredups' # no duplicates
 export HISTSIZE=8192
 
 ## ------------------------    XDG Paths settings    ------------------------ #
-# export HOME="/home/$USER/"
 export XDG_DATA_HOME="$HOME/.local/share/"
 export XDG_CONFIG_HOME="$HOME/.config/"
 export XDG_STATE_HOME="$HOME/.local/state/"
 export XDG_DATA_DIRS='/usr/share/:/usr/local/share/'
 export XDG_CONFIG_DIRS='/etc/xdg/'
 export XDG_CACHE_HOME="$HOME/.cache/"
-##export XDG_RUNTIME_DIR=
 
 ## ------------------------    Password Store env    ------------------------ #
 export PASSWORD_STORE_GENERATED_LENGTH=64
@@ -104,8 +75,10 @@ export _JAVA_OPTIONS='-Dawt.useSystemAAFontSettings=on'
 export JAVA_FONTS=/usr/share/fonts/TTF
 
 # ========================          ALIASES          ======================== #
-##alias ls='ls --color=auto'
-##alias grep='grep --color=auto'
+alias ls='ls --color=auto'
+alias lsa='ls -lah'
+alias grep='grep --color=auto'
+alias tree='tree -C'
 alias xxd="xxd -c 16 -g 1"
 alias octave="octave --gui"
 
@@ -113,7 +86,7 @@ alias octave="octave --gui"
 alias secure_mode_on='set +o history'
 alias secure_mode_off='set -o history'
 
-## download audio from youtube video link
+## download audio from some video link
 alias yt-dlp-download-audio='yt-dlp --audio-quality 0 --audio-format best -x'
 
 ## connect to or create tmux session
